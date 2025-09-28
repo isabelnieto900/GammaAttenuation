@@ -1,10 +1,7 @@
-
-# Build directories
 build/
 Build/
 BUILD/
 
-# CMake generated files
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
@@ -12,11 +9,9 @@ Makefile
 *.cmake
 .cmake/
 
-# Compiled executables
 GammaAttenuation
 *.exe
 
-# Object files and libraries
 *.o
 *.a
 *.so
@@ -28,7 +23,6 @@ GammaAttenuation
 *.pcm
 *.d
 
-# Output files
 output.txt
 *.out
 *.log
@@ -39,7 +33,6 @@ G4*.dat
 *.prim
 *.mac~
 
-# Screenshots and images
 screenshot.png
 *.png
 *.jpg
@@ -53,16 +46,5 @@ screenshot.png
 *~
 *.tmp
 *.temp
-.DS_Store
-Thumbs.db
 
-# Python cache (if using Python scripts)
-__pycache__/
-*.pyc
-*.pyo
-
-# Backup files
-*.bak
-*.backup
-*.orig
 .github/prompts/gamma2.prompt.md
