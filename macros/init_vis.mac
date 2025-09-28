@@ -1,0 +1,26 @@
+/vis/open OGL
+/vis/drawVolume
+/vis/scene/create
+/vis/scene/add/volume world
+/vis/scene/add/trajectories smooth
+/vis/viewer/set/viewpointVector -1 -1 1
+/vis/viewer/zoom 2.0
+/vis/viewer/set/style surface
+/vis/viewer/set/hiddenMarker true
+
+# Colores para diferentes materiales
+/vis/geometry/set/colour world 0 white
+/vis/geometry/set/colour detector 0 blue
+/vis/geometry/set/colour absorber 0 red
+
+# Colores para trayectorias por tipo de partícula
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+/vis/modeling/trajectories/drawByParticleID-0/set e- red
+/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+/vis/modeling/trajectories/drawByParticleID-0/set proton yellow
+/vis/modeling/trajectories/drawByParticleID-0/set neutron white
+
+# Ejes de colores
+/vis/scene/add/axes 0 0 0 2 cm
+/vis/scene/endOfEventAction accumulate

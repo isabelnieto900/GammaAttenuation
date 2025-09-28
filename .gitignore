@@ -1,0 +1,68 @@
+
+# Build directories
+build/
+Build/
+BUILD/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+.cmake/
+
+# Compiled executables
+GammaAttenuation
+*.exe
+
+# Object files and libraries
+*.o
+*.a
+*.so
+*.dylib
+
+# ROOT files
+*.root
+*.C
+*.pcm
+*.d
+
+# Output files
+output.txt
+*.out
+*.log
+
+# Geant4 generated files
+G4*.dat
+*.wrl
+*.prim
+*.mac~
+
+# Screenshots and images
+screenshot.png
+*.png
+*.jpg
+*.gif
+
+# VS Code settings (optional - some prefer to keep)
+.vscode/
+.vs/
+
+# Temporary files
+*~
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Python cache (if using Python scripts)
+__pycache__/
+*.pyc
+*.pyo
+
+# Backup files
+*.bak
+*.backup
+*.orig
+.github/prompts/gamma2.prompt.md

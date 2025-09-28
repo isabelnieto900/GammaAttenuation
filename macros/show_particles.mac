@@ -1,0 +1,25 @@
+cat > ../macros/show_particles.mac << 'EOF'
+# Limpiar y configurar visualización
+/vis/scene/create
+/vis/scene/add/volume
+/vis/scene/add/axes 0 0 0 10 cm
+
+# Configurar trayectorias  
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
+
+# Colores por tipo de partícula
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+/vis/modeling/trajectories/drawByParticleID-0/set e- red
+/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+
+# Vista lateral
+/vis/viewer/set/viewpointVector 1 0 0
+/vis/viewer/zoom 1.5
+
+# Ejecutar eventos
+/run/beamOn 5
+/vis/viewer/refresh
+EOF

@@ -1,0 +1,42 @@
+# Configuración de visualización
+/run/initialize
+
+# Configurar visualización con OpenGL
+/vis/open OGL 600x600-0+0
+
+# Configurar escena
+/vis/drawVolume
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+
+# Configurar detector
+/vis/scene/create
+/vis/scene/add/volume world
+/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/set/lightsVector -1 0 0
+cd /home/isabel/GammaAttenuation
+echo "/run/initialize
+/vis/open OGL
+/vis/drawVolume
+/vis/viewer/set/viewpointVector -1 0 0
+/vis/scene/add/trajectories
+/run/beamOn 5" > macros/vis.mac
+
+cd build
+G4UI_USE_QT=0 G4VIS_USE_OPENGLQT=0 ./GammaAttenuation macros/vis.mac
+# Mostrar trayectorias
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/setRGBA 1. 0. 0. 1.
+
+# Mostrar hits
+/vis/scene/add/hits
+
+# Configurar vista
+/vis/viewer/set/style wireframe
+/vis/viewer/set/auxiliaryEdge true
+/vis/viewer/set/lineWidth 2
+
+# Ejecutar algunos eventos
+/vis/viewer/flush
+/run/beamOn 10
