@@ -1,0 +1,79 @@
+# Directorios de build
+build/
+Build/
+BUILD/
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+.cmake/
+
+#Macros (se ignoran porque se van a generar con los scripts .sh)
+GammaAtenuation/mac/*.mac
+# Compiled binaries
+GammaAttenuation
+*.exe
+*.o
+*.a
+*.so
+*.dylib
+
+# ROOT compiled analysis executables
+GammaAtenuation/analysis/multi_energy_analysis
+GammaAtenuation/analysis/multi_material_analysis
+GammaAtenuation/analysis/multi_thickness_analysis
+
+# ROOT files
+*.root
+*.pcm
+*.d
+
+# Output files
+output.txt
+*.out
+*.log
+
+# Geant4 generated files
+G4*.dat
+*.wrl
+*.prim
+*.mac~
+
+# Images and media (allow PNG in results)
+*.png
+*.jpg
+*.gif
+*.csv
+*.pdf
+*.txt
+*.svg
+
+# Results directory - ignore everything except PNG files
+#!results/*.png
+#!results/**/*.png
+
+# Configuraciones de IDE
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Entorno virtual Python
+GA/
+venv/
+env/
+.env/
+
+analysis/multi_thickness_bone_analysis_simple

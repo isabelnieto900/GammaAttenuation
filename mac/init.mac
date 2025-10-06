@@ -1,0 +1,40 @@
+# init.mac -- configuración inicial 
+
+# Mensajes
+/control/verbose 1 # imprime info básica
+/run/verbose 1 # dice que run se ejecuta
+/event/verbose 0 #no imprime cada evento para que no sea muy largo
+/tracking/verbose 0
+
+# Inicializacion del Detector
+/detector/setMaterial water
+
+
+# Visualización interactiva mejorada
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/style surface
+/vis/viewer/set/auxiliaryEdge true
+/vis/viewer/set/viewpointThetaPhi 60 30
+/vis/drawVolume
+/vis/scene/add/axes 0 0 0 10 cm
+#/vis/viewer/zoom 2.0
+
+# Mostrar trayectoria
+/vis/scene/add/trajectories
+/vis/modeling/trajectories/create/drawByCharge
+/vis/scene/add/hits
+/vis/scene/endOfEventAction accumulate
+/tracking/verbose 1
+
+# Inicializo y disparo fotones
+/run/initialize
+/run/beamOn 50
+
+# comandos de ayuda disponibles 
+# Idle> help /detector/
+# Idle> help /detector/setMaterial
+# Idle help /detector/setThickness
+
+
+
+

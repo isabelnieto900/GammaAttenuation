@@ -1,0 +1,15 @@
+# Configuración automática para Plomo
+/run/initialize
+
+# Configurar detector
+/detector/setMaterial G4_Pb
+/detector/setThickness 5 cm
+
+# Configurar fuente (Cs-137)
+/gun/particle gamma
+/gun/energy 662 keV
+/gun/position 0 0 -10 cm
+/gun/direction 0 0 1
+
+# Ejecutar simulación
+/run/beamOn 100000

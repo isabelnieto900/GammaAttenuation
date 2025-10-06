@@ -1,0 +1,15 @@
+# Configuración para músculo - 3.0cm
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+# Configurar detector
+/detector/setMaterial G4_MUSCLE_STRIATED_ICRU
+/detector/setThickness 3.0 cm
+
+# Inicializar
+/run/initialize
+
+# Ejecutar simulación
+/run/beamOn 100000

@@ -1,0 +1,5 @@
+# no visual
+/vis/enable false
+/run/initialize
+/run/beamOn 100
+
