@@ -27,7 +27,7 @@ void multi_thickness_muscle_analysis()
     const char *material = "muscle";
 
     // Crear directorio de salida si no existe
-    gSystem->Exec("mkdir -p /home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness");
+    gSystem->Exec("mkdir -p /home/sofi/REPOS/GammaAttenuation/results/multi_thickness");
 
     printf("\nAnalisis Multi-Espesor - Músculo Esquelético\n");
     printf("===========================================\n");
@@ -35,7 +35,7 @@ void multi_thickness_muscle_analysis()
     // Recolectar datos de archivos ROOT
     for (int i = 0; i < nPoints; i++)
     {
-        TString filename = Form("/home/isabel/Physiscs_projects/GammaAtenuation/results/data_thickness_%s_%.1f.root", material, thickness[i]);
+        TString filename = Form("/home/sofi/REPOS/GammaAttenuation/results/data_thickness_%s_%.1f.root", material, thickness[i]);
 
         TFile *file = TFile::Open(filename);
         if (!file || file->IsZombie())
@@ -69,7 +69,7 @@ void multi_thickness_muscle_analysis()
     }
 
     // Crear archivo CSV con resultados
-    FILE *csvFile = fopen("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/thickness_muscle_analysis_data.csv", "w");
+    FILE *csvFile = fopen("/home/sofi/REPOS/GammaAttenuation/results/multi_thickness/thickness_muscle_analysis_data.csv", "w");
     fprintf(csvFile, "Thickness_cm,Transmission,Ln_Transmission,Error\n");
     for (int i = 0; i < nPoints; i++)
     {
@@ -100,7 +100,7 @@ void multi_thickness_muscle_analysis()
     printf("R² = %.4f\n", r2);
 
     // Guardar resultados de ajuste
-    FILE *resultsFile = fopen("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/fit_muscle_results.txt", "w");
+    FILE *resultsFile = fopen("/home/sofi/REPOS/GammaAttenuation/results/multi_thickness/fit_muscle_results.txt", "w");
     fprintf(resultsFile, "Multi-Thickness Analysis Results\n");
     fprintf(resultsFile, "==============================\n");
     fprintf(resultsFile, "Material: Skeletal Muscle\n");

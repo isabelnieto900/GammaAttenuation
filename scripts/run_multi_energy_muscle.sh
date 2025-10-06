@@ -9,7 +9,7 @@ echo "Ejecutando análisis de coeficientes de atenuación..."
 # Verificar que estamos en el directorio correcto
 if [ ! -f "analysis/multi_energy_muscle_analysis.C" ]; then
     echo "Error: No se encuentra el archivo de análisis"
-    echo "Ejecute desde el directorio raíz del proyecto GammaAtenuation"
+    echo "Ejecute desde el directorio raíz del proyecto GammaAttenuation"
     exit 1
 fi
 

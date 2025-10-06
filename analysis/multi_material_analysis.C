@@ -21,7 +21,7 @@
 void multi_material_analysis()
 {
     // Crear directorio de salida si no existe
-    gSystem->Exec("mkdir -p /home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material");
+    gSystem->Exec("mkdir -p /home/sofi/REPOS/GammaAttenuation/results/multi_material");
 
     printf("\nAnalisis Multi-Material\n");
     printf("======================\n");
@@ -68,7 +68,7 @@ void multi_material_analysis()
     // Recolectar datos de archivos ROOT
     for (int i = 0; i < nMaterials; i++)
     {
-        TString filename = Form("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/material_%s_%.0fcm.root", materials[i].name, thickness);
+        TString filename = Form("/home/sofi/REPOS/GammaAttenuation/results/multi_material/material_%s_%.0fcm.root", materials[i].name, thickness);
 
         TFile *file = TFile::Open(filename);
         if (!file || file->IsZombie())
@@ -125,7 +125,7 @@ void multi_material_analysis()
     }
 
     // Crear archivo CSV con resultados comparativos
-    FILE *csvFile = fopen("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/material_comparison.csv", "w");
+    FILE *csvFile = fopen("/home/sofi/REPOS/GammaAttenuation/results/multi_material/material_comparison.csv", "w");
     fprintf(csvFile, "Material,Description,Density_gcm3,Transmission,Mu_cm1,MuRho_cm2g,Transmitted,Total\n");
     for (int i = 0; i < nMaterials; i++)
     {
@@ -162,7 +162,7 @@ void multi_material_analysis()
     printf("\\n");
 
     // Crear archivo de resultados de análisis
-    FILE *resultsFile = fopen("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/analysis_results.txt", "w");
+    FILE *resultsFile = fopen("/home/sofi/REPOS/GammaAttenuation/results/multi_material/analysis_results.txt", "w");
     fprintf(resultsFile, "Multi-Material Analysis Results\\n");
     fprintf(resultsFile, "==============================\\n");
     fprintf(resultsFile, "Simulation Parameters:\\n");

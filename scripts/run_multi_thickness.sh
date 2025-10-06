@@ -2,7 +2,7 @@
 
 # Script Multi-Espesor
 # Análisis de atenuación gamma vs espesor para agua
-# Ejecuta análisif [ ! -f "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/thickness_analysis_data.csv" ]; thens ROOT + visualización Python
+# Ejecuta análisif [ ! -f "/home/sofi/REPOS/GammaAttenuation/results/multi_thickness/thickness_analysis_data.csv" ]; thens ROOT + visualización Python
 
 echo "========================================"
 echo "  ANÁLISIS MULTI-ESPESOR"
@@ -97,7 +97,7 @@ echo "Paso 2: Ejecutando análisis ROOT..."
 echo "-----------------------------------"
 
 # Ejecutar análisis ROOT
-cd /home/isabel/Physiscs_projects/GammaAtenuation
+cd /home/sofi/REPOS/GammaAttenuation
 root -l -b -q "analysis/multi_thickness_analysis.C"
 
 echo "Análisis ROOT completado, genere las gráficas con python analysis/plot_multi_thickness.py"
@@ -108,7 +108,7 @@ echo "  ANÁLISIS MULTI-ESPESOR COMPLETADO"
 echo "=========================================="
 echo ""
 echo "Datos generados en:"
-echo "  /home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/"
+echo "  /home/sofi/REPOS/GammaAttenuation/results/multi_thickness/"
 echo ""
 echo "Para generar las gráficas, ejecuta:"
 echo "  source GA/bin/activate"

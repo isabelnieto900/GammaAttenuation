@@ -50,8 +50,8 @@ def main():
     os.makedirs("results/multi_thickness", exist_ok=True)
     
     # Leer datos de análisis
-    data_file = "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/thickness_analysis_data.csv"
-    results_file = "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/fit_results.txt"
+    data_file = "/home/sofi/REPOS/GammaAttenuation/results/multi_thickness/thickness_analysis_data.csv"
+    results_file = "/home/sofi/REPOS/GammaAttenuation/results/multi_thickness/fit_results.txt"
     
     if not os.path.exists(data_file):
         print(f"ERROR: No se encuentra {data_file}")

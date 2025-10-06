@@ -97,7 +97,7 @@ echo "Paso 2: Ejecutando análisis ROOT..."
 echo "-----------------------------------"
 
 # Ejecutar análisis ROOT
-cd /home/isabel/Physiscs_projects/GammaAtenuation
+cd /home/sofi/REPOS/GammaAttenuation
 root -l -b -q "analysis/multi_thickness_muscle_analysis.C"
 
 echo "Paso 3: Generando visualizaciones..."
@@ -113,7 +113,7 @@ echo "  ANÁLISIS MULTI-ESPESOR COMPLETADO"
 echo "=========================================="
 echo ""
 echo "Datos generados en:"
-echo "  /home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/"
+echo "  /home/sofi/REPOS/GammaAttenuation/results/multi_thickness/"
 echo ""
 echo "Archivos generados:"
 echo "  - thickness_muscle_analysis_data.csv"

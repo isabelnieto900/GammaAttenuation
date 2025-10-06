@@ -12,7 +12,7 @@ Makefile
 .cmake/
 
 #Macros (se ignoran porque se van a generar con los scripts .sh)
-GammaAtenuation/mac/*.mac
+ /mac/*.mac
 # Compiled binaries
 GammaAttenuation
 *.exe
@@ -22,9 +22,9 @@ GammaAttenuation
 *.dylib
 
 # ROOT compiled analysis executables
-GammaAtenuation/analysis/multi_energy_analysis
-GammaAtenuation/analysis/multi_material_analysis
-GammaAtenuation/analysis/multi_thickness_analysis
+ /analysis/multi_energy_analysis
+ /analysis/multi_material_analysis
+ /analysis/multi_thickness_analysis
 
 # ROOT files
 *.root

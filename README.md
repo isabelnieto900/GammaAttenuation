@@ -21,7 +21,7 @@ make
 ## Estructura del Proyecto
 
 ```
-GammaAtenuation/
+GammaAttenuation/
 ├── src/                          # Código fuente GEANT4
 ├── include/                      # Headers GEANT4
 ├── mac/                          # Archivos macro para simulaciones

@@ -25,7 +25,7 @@ def plot_material_comparison():
     os.makedirs("results/multi_material", exist_ok=True)
     
     # Archivo de datos CSV
-    data_file = "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/material_comparison.csv"
+    data_file = "/home/sofi/REPOS/GammaAttenuation/results/multi_material/material_comparison.csv"
     
     if not os.path.exists(data_file):
         print(f"ERROR: No se encuentra {data_file}")
