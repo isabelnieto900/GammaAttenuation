@@ -1,4 +1,4 @@
-# Gamma Attenuation Simulation
+# Gamma Attenuation Simulation 
 
 Este proyecto simula la atenuación de rayos gamma usando GEANT4 para estudiar la interacción de radiación gamma con diferentes materiales y espesores.
 
@@ -27,15 +27,15 @@ GammaAtenuation/
 ├── mac/                          # Archivos macro para simulaciones
 ├── analysis/                     # Scripts de análisis
 │   ├── multi_thickness_analysis.C   # Análisis ley Beer-Lambert
-│   ├── multi_material_analysis.C    # Comparación de materiales
-│   ├── multi_energy_analysis.C      # Análisis multi-energía
+│   ├── multi_material_analysis.C    # (Aún no refactorizado)
+│   ├── Multi_energy_analysis.C      # Script genérico para análisis multi-energía
 │   ├── plot_multi_thickness.py      # Gráficas espesor vs atenuación
-│   ├── plot_multi_material.py       # Gráficas comparación materiales
-│   └── plot_multi_energy.py         # Gráficas energía vs atenuación
+│   ├── plot_multi_material.py       # (Aún no refactorizado)
+│   └── Plot_multi_energy.py         # Script genérico para gráficas multi-energía
 ├── scripts/                      # Scripts de automatización
-│   ├── run_multi_thickness.sh       # Ejecuta análisis de espesores
+│   ├── run_multi_thickness.sh       # (Aún no refactorizado)
 │   ├── run_multi_material.sh        # Ejecuta análisis de materiales
-│   ├── run_multi_energy.sh          # Ejecuta análisis multi-energía
+│   ├── Run_multi_energy.sh          # Ejecuta análisis multi-energía
 │   └── run_complete_analysis.sh     # Ejecuta análisis completo
 ├── results/                      # Resultados de simulaciones
 ├── build/                        # Directorio de compilación
@@ -50,8 +50,8 @@ Ejecuta simulaciones con diferentes espesores de agua (0.5-15.0 cm) para verific
 ### run_multi_material.sh  
 Compara atenuación entre agua, músculo esquelético y hueso compacto a espesor fijo de 5 cm.
 
-### run_multi_energy.sh
-Analiza atenuación con diferentes energías de rayos gamma para estudiar dependencia energética.
+### Run_multi_energy.sh <material>
+Script genérico que analiza la atenuación para un material específico (`water`, `bone`, `muscle`) en un rango de energías. Estudia la dependencia energética y compara los resultados con la base de datos del NIST.
 
 ### run_complete_analysis.sh
 Ejecuta los tres análisis anteriores secuencialmente.
@@ -73,7 +73,7 @@ pip install matplotlib numpy pandas
 3. **Ejecutar análisis específico:**
 ```bash
 ./scripts/run_multi_thickness.sh    # Análisis espesores
-./scripts/run_multi_material.sh     # Análisis materiales  
+./scripts/run_multi_material.sh <material>    # Análisis materiales  
 ./scripts/run_multi_energy.sh       # Análisis energías
 ```
 
