@@ -48,13 +48,12 @@ G4*.dat
 *.gif
 *.csv
 *.pdf
-*.txt
 *.svg
 
 # Results directory - ignore everything except PNG files
 #!results/*.png
 #!results/**/*.png
-
+results/*
 # Configuraciones de IDE
 .vscode/
 .vs/
