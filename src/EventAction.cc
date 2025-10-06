@@ -8,7 +8,7 @@
 EventAction::EventAction(RunAction *runAct)
     : G4UserEventAction(), runAction(runAct)
 {
-  outputFile.open("../results/event_data.csv", std::ios::out); // sobrescribe cada corrida
+  outputFile.open("results/event_data.csv", std::ios::out); // sobrescribe cada corrida
   if (!outputFile.is_open())
     G4Exception("EventAction", "001", FatalException, "Cannot open output file");
 }

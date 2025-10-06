@@ -24,7 +24,18 @@ endif()
 include(${Geant4_USE_FILE})
 
 # Archivos fuente
-file(GLOB sources src/*.cc)
+set(sources
+    src/main.cc
+    src/DetectorConstruction.cc
+    src/PrimaryGeneratorAction.cc
+    src/RunAction.cc
+    src/EventAction.cc
+    src/MiSensitiveDetector.cc
+    src/MiHit.cc
+    src/PhysicsListExtended.cc
+    src/DetectorMessenger.cc
+    src/PrimaryGeneratorMessenger.cc
+    )
 
 # Agregar la ruta de inclusión
 include_directories(${PROJECT_SOURCE_DIR}/include)

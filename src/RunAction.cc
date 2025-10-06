@@ -54,7 +54,7 @@ void RunAction::BeginOfRunAction(const G4Run *run)
 
 #ifdef USE_ROOT
   // Crear archivo ROOT simple
-  TString rootFileName = TString::Format("../results/data_run_%s.root", detector->GetMaterial().c_str());
+  TString rootFileName = TString::Format("results/data_run_%s.root", detector->GetMaterial().c_str());
   rootFile = new TFile(rootFileName.Data(), "RECREATE");
 
   // Crear Tree simple para datos
@@ -83,7 +83,7 @@ void RunAction::BeginOfRunAction(const G4Run *run)
 #endif
 
   // Preparar archivo de resultados
-  std::ofstream resultsFile("../results/results_summary.txt", std::ios::app);
+  std::ofstream resultsFile("results/results_summary.txt", std::ios::app);
   resultsFile << "\n=== RUN " << run->GetRunID() << " ===\n";
   resultsFile << "Material: " << detector->GetMaterial() << "\n";
   resultsFile << "Espesor: " << detector->GetThickness() / CLHEP::cm << " cm\n";
@@ -118,9 +118,8 @@ void RunAction::EndOfRunAction(const G4Run *run)
   rootFile->cd();
   attenuationTree->Write();
   attenuationHist->Write();
-  rootFile->Close();
-  rootFile->Close();  // Cerramos el archivo aquí
-  delete rootFile;    // Liberamos la memoria
+  rootFile->Close();  // Cerramos el archivo aquí. El destructor se encargará de borrarlo.
+  // delete rootFile; // No borrar aquí, el destructor de RunAction lo hará.
   rootFile = nullptr; // Evitamos que el destructor intente borrarlo de nuevo
 
   G4cout << "ROOT: Datos guardados" << G4endl;
@@ -129,14 +128,14 @@ void RunAction::EndOfRunAction(const G4Run *run)
 #endif
 
   // Guardar resultados finales
-  std::ofstream resultsFile("../results/results_summary.txt", std::ios::app);
+  std::ofstream resultsFile("results/results_summary.txt", std::ios::app);
   resultsFile << "Transmitidos: " << transmittedEvents << "\n";
   resultsFile << "Transmisión: " << transmissionRatio << "\n";
   resultsFile << "Coef. atenuación: " << attenuationCoeff << " cm^-1\n";
   resultsFile.close();
 
   // Archivo CSV para ROOT
-  std::ofstream csvFile("../results/attenuation_data.csv", std::ios::app);
+  std::ofstream csvFile("results/attenuation_data.csv", std::ios::app);
   csvFile << detector->GetMaterial() << ","
           << detector->GetThickness() / CLHEP::cm << ","
           << totalEvents << ","
