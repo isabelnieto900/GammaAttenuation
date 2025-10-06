@@ -1,151 +1,167 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <iomanip>
-#include <cmath>
-#include <algorithm>
+/* ------- ANÁLISIS MULTI-ENERGÍA -------
+ * Análisis de atenuación gamma vs energía para músculo
+ * Estudio de coeficientes de atenuación másicos
+ * Material: Músculo esquelético (G4_MUSCLE_SKELETAL_ICRP)
+ * Autor: Isabel Nieto, PoPPop21
+ * Fecha: Octubre 2025
+ * --------------------------------------
+ * Uso: root -l -b -q "multi_energy_muscle_analysis.C"
+ */
 
-struct EnergyData
+void multi_energy_muscle_analysis()
 {
-    double energy_MeV;
-    double energy_keV;
-    double muRho_NIST;
-    double muRho_geant4;
-    double difference_percent;
-};
+    // Configuración de estilo ROOT
+    gStyle->SetOptStat(0);
+    gStyle->SetOptFit(1111);
+    gStyle->SetPadGridX(true);
+    gStyle->SetPadGridY(true);
 
-int main()
-{
-    std::cout << "=== Multi-Energy Analysis ===" << std::endl;
-    std::cout << "Analyzing attenuation coefficients across energy spectrum" << std::endl;
+    // Crear directorio de salida si no existe
+    gSystem->Exec("mkdir -p results/multi_energy");
+
+    printf("\nAnalisis Multi-Energía - Músculo Esquelético\n");
+    printf("============================================\n");
 
     // Datos NIST para músculo esquelético (coeficiente de atenuación másico μ/ρ en cm²/g)
-    std::vector<double> energia_MeV = {
-        1.00000E-03, 1.50000E-03, 2.00000E-03, 3.00000E-03, 4.00000E-03,
-        5.00000E-03, 6.00000E-03, 8.00000E-03, 1.00000E-02, 1.50000E-02,
-        2.00000E-02, 3.00000E-02, 4.00000E-02, 5.00000E-02, 6.00000E-02,
-        8.00000E-02, 1.00000E-01, 1.50000E-01, 2.00000E-01, 3.00000E-01,
-        4.00000E-01, 5.00000E-01, 6.00000E-01, 6.62000E-01, 8.00000E-01,
-        1.00000E+00, 1.25000E+00, 1.50000E+00, 2.00000E+00, 3.00000E+00,
-        4.00000E+00, 5.00000E+00, 6.00000E+00, 8.00000E+00, 1.00000E+01,
-        1.50000E+01, 2.00000E+01};
+    const int nEnergies = 28;
+    double energias_keV[nEnergies] = {1, 5, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500, 600, 662, 800, 1000, 1250, 1500, 2000, 3000, 4000, 5000, 6000, 8000, 10000, 15000, 20000};
 
-    std::vector<double> muRho_NIST = {
-        3.951E+03, 1.335E+03, 5.991E+02, 1.873E+02, 8.042E+01,
-        4.139E+01, 2.397E+01, 1.009E+01, 5.185E+00, 1.628E+00,
-        7.879E-01, 3.654E-01, 2.610E-01, 2.207E-01, 2.004E-01,
-        1.788E-01, 1.662E-01, 1.467E-01, 1.335E-01, 1.156E-01,
-        1.034E-01, 9.443E-02, 8.733E-02, 8.346E-02, 7.669E-02,
-        6.896E-02, 6.168E-02, 5.611E-02, 4.819E-02, 3.868E-02,
-        3.317E-02, 2.954E-02, 2.701E-02, 2.368E-02, 2.164E-02,
-        1.893E-02, 1.768E-02};
+    // Datos NIST correspondientes para músculo esquelético (interpolados donde sea necesario)
+    double muRho_NIST[nEnergies] = {
+        3.861E+03, 3.057E+02, 3.820E+01, 5.776E+00, 2.133E+00, 3.982E-01, 9.695E-02, 4.979E-02,
+        1.563E-02, 7.567E-03, 3.508E-03, 2.506E-03, 2.119E-03, 1.924E-03, 1.740E-03, 1.596E-03,
+        1.406E-03, 1.279E-03, 1.108E-03, 9.914E-04, 9.050E-04, 8.370E-04, 8.013E-04, 7.350E-04,
+        6.607E-04, 5.914E-04, 5.378E-04, 4.621E-04};
 
-    std::cout << "Loaded " << energia_MeV.size() << " NIST data points" << std::endl;
+    double transmission[nEnergies] = {0};
+    double muRho_geant4[nEnergies] = {0};
+    double mu_geant4[nEnergies] = {0};
+    double errors[nEnergies] = {0};
 
-    // Crear directorio de resultados
-    system("mkdir -p results/multi_energy");
+    double thickness = 5.0; // cm
+    double density = 1.05;  // g/cm³ para músculo esquelético
 
-    // Vector para almacenar datos combinados
-    std::vector<EnergyData> combinedData;
+    printf("Parámetros de simulación:\n");
+    printf("- Material: Músculo esquelético\n");
+    printf("- Espesor: %.1f cm\n", thickness);
+    printf("- Densidad: %.2f g/cm³\n", density);
+    printf("- Energías: %d puntos\n", nEnergies);
+    printf("\n");
 
-    // Modelo simplificado para simular coeficientes GEANT4
-    // Basado en el valor conocido de 662 keV: μ/ρ = 0.0334 cm²/g
-    double known_energy = 0.662;         // MeV
-    double known_muRho_geant4 = 0.0334;  // cm²/g
-    double known_muRho_nist = 8.346E-02; // cm²/g para 662 keV
-    double scaling_factor = known_muRho_geant4 / known_muRho_nist;
-
-    std::cout << "\nGenerating GEANT4 data using scaling factor: " << scaling_factor << std::endl;
-
-    // Generar datos GEANT4 simulados para todas las energías
-    for (size_t i = 0; i < energia_MeV.size(); i++)
+    // Recolectar datos de archivos ROOT
+    for (int i = 0; i < nEnergies; i++)
     {
-        EnergyData data;
-        data.energy_MeV = energia_MeV[i];
-        data.energy_keV = energia_MeV[i] * 1000.0;
-        data.muRho_NIST = muRho_NIST[i];
+        TString filename = Form("results/data_energy_muscle_%.0fkeV.root", energias_keV[i]);
 
-        // Simular datos GEANT4 usando un modelo basado en el punto conocido
-        // Añadir variación realista basada en física
-        double energy_ratio = energia_MeV[i] / known_energy;
-        double energy_correction = 1.0;
-
-        // Corrección por efectos físicos dominantes
-        if (energia_MeV[i] < 0.01)
+        TFile *file = TFile::Open(filename);
+        if (!file || file->IsZombie())
         {
-            // Región de absorción fotoeléctrica dominante
-            energy_correction = 0.8 + 0.2 * std::pow(energia_MeV[i] / 0.01, 0.3);
-        }
-        else if (energia_MeV[i] > 1.0)
-        {
-            // Región donde domina dispersión Compton
-            energy_correction = 1.1 - 0.1 * std::log10(energia_MeV[i]);
+            printf("ERROR: No se puede abrir %s\n", filename.Data());
+            transmission[i] = 0.0;
+            continue;
         }
 
-        data.muRho_geant4 = muRho_NIST[i] * scaling_factor * energy_correction;
-        data.difference_percent = ((data.muRho_geant4 - data.muRho_NIST) / data.muRho_NIST) * 100.0;
-
-        combinedData.push_back(data);
-    }
-
-    // Generar archivo CSV para visualización
-    std::ofstream csvFile("results/multi_energy/energy_spectrum_muscle_comparison.csv");
-    csvFile << "Energy_MeV,Energy_keV,MuRho_NIST_cm2g,MuRho_GEANT4_cm2g,Difference_percent" << std::endl;
-
-    for (const auto &data : combinedData)
-    {
-        csvFile << std::fixed << std::setprecision(6)
-                << data.energy_MeV << ","
-                << data.energy_keV << ","
-                << data.muRho_NIST << ","
-                << data.muRho_geant4 << ","
-                << data.difference_percent << std::endl;
-    }
-    csvFile.close();
-
-    // Mostrar estadísticas
-    std::cout << "\n=== RESULTADOS ===" << std::endl;
-    std::cout << "Energías analizadas: " << combinedData.size() << std::endl;
-    std::cout << "Rango de energía: " << energia_MeV.front() << " - " << energia_MeV.back() << " MeV" << std::endl;
-
-    // Encontrar diferencias máximas y mínimas
-    double max_diff = -1000, min_diff = 1000;
-    double max_energy = 0, min_energy = 0;
-
-    for (const auto &data : combinedData)
-    {
-        if (data.difference_percent > max_diff)
+        // Leer tree de datos
+        TTree *tree = (TTree *)file->Get("data");
+        if (!tree)
         {
-            max_diff = data.difference_percent;
-            max_energy = data.energy_MeV;
+            printf("ERROR: No se encuentra data tree en %s\n", filename.Data());
+            file->Close();
+            transmission[i] = 0.0;
+            continue;
         }
-        if (data.difference_percent < min_diff)
+
+        // Leer datos de transmisión
+        Float_t transmissionRatio;
+        tree->SetBranchAddress("transmissionRatio", &transmissionRatio);
+        tree->GetEntry(0);
+
+        transmission[i] = transmissionRatio;
+
+        // Calcular coeficiente de atenuación
+        if (transmission[i] > 0)
         {
-            min_diff = data.difference_percent;
-            min_energy = data.energy_MeV;
+            mu_geant4[i] = -log(transmission[i]) / thickness;
+            muRho_geant4[i] = mu_geant4[i] / density;
+            errors[i] = sqrt(transmissionRatio * 100000) / 100000; // Error aproximado de Poisson
+        }
+        else
+        {
+            mu_geant4[i] = 0;
+            muRho_geant4[i] = 0;
+            errors[i] = 0;
+        }
+
+        printf("Energía %.0f keV: T = %.4f, μ/ρ = %.6f cm²/g\n",
+               energias_keV[i], transmission[i], muRho_geant4[i]);
+
+        file->Close();
+    }
+
+    // Crear archivo CSV con resultados comparativos
+    FILE *csvFile = fopen("results/multi_energy/energy_spectrum_muscle_comparison.csv", "w");
+    fprintf(csvFile, "Energy_MeV,Energy_keV,MuRho_NIST_cm2g,MuRho_GEANT4_cm2g,Difference_percent\n");
+
+    for (int i = 0; i < nEnergies; i++)
+    {
+        double energy_MeV = energias_keV[i] / 1000.0;
+        double difference_percent = 0.0;
+
+        if (muRho_NIST[i] > 0 && muRho_geant4[i] > 0)
+        {
+            difference_percent = ((muRho_geant4[i] - muRho_NIST[i]) / muRho_NIST[i]) * 100.0;
+        }
+
+        fprintf(csvFile, "%.6f,%.1f,%.6e,%.6e,%.2f\n",
+                energy_MeV, energias_keV[i], muRho_NIST[i], muRho_geant4[i], difference_percent);
+    }
+    fclose(csvFile);
+
+    // Análisis estadístico
+    printf("\n=== ANÁLISIS ESTADÍSTICO ===\n");
+
+    // Encontrar diferencias para 662 keV
+    int idx662 = -1;
+    for (int i = 0; i < nEnergies; i++)
+    {
+        if (abs(energias_keV[i] - 662) < 1)
+        {
+            idx662 = i;
+            break;
         }
     }
 
-    std::cout << std::fixed << std::setprecision(1);
-    std::cout << "Máxima diferencia: " << max_diff << "% a " << max_energy << " MeV" << std::endl;
-    std::cout << "Mínima diferencia: " << min_diff << "% a " << min_energy << " MeV" << std::endl;
-
-    // Estadísticas para 662 keV específicamente
-    auto it662 = std::find_if(combinedData.begin(), combinedData.end(),
-                              [](const EnergyData &d)
-                              { return std::abs(d.energy_keV - 662.0) < 1.0; });
-
-    if (it662 != combinedData.end())
+    if (idx662 >= 0 && muRho_geant4[idx662] > 0)
     {
-        std::cout << "\n--- Análisis específico para 662 keV (Cs-137) ---" << std::endl;
-        std::cout << std::setprecision(4);
-        std::cout << "μ/ρ NIST:   " << it662->muRho_NIST << " cm²/g" << std::endl;
-        std::cout << "μ/ρ GEANT4: " << it662->muRho_geant4 << " cm²/g" << std::endl;
-        std::cout << "Diferencia: " << std::setprecision(1) << it662->difference_percent << "%" << std::endl;
+        double diff_662 = ((muRho_geant4[idx662] - muRho_NIST[idx662]) / muRho_NIST[idx662]) * 100.0;
+        printf("\n--- Análisis específico para 662 keV (Cs-137) ---\n");
+        printf("μ/ρ NIST:   %.6f cm²/g\n", muRho_NIST[idx662]);
+        printf("μ/ρ GEANT4: %.6f cm²/g\n", muRho_geant4[idx662]);
+        printf("Diferencia: %.1f%%\n", diff_662);
     }
 
-    std::cout << "\nArchivo generado: results/multi_energy/energy_spectrum_muscle_comparison.csv" << std::endl;
-    std::cout << "Análisis multi-energía completado!" << std::endl;
+    // Crear archivo de resultados de análisis
+    FILE *resultsFile = fopen("results/multi_energy/muscle_analysis_results.txt", "w");
+    fprintf(resultsFile, "Multi-Energy Analysis Results - Músculo Esquelético\n");
+    fprintf(resultsFile, "==================================================\n");
+    fprintf(resultsFile, "Material: Músculo esquelético (G4_MUSCLE_SKELETAL_ICRP)\n");
+    fprintf(resultsFile, "Thickness: %.1f cm\n", thickness);
+    fprintf(resultsFile, "Density: %.2f g/cm³\n", density);
+    fprintf(resultsFile, "Energy range: %.0f keV - %.0f keV\n", energias_keV[0], energias_keV[nEnergies - 1]);
+    fprintf(resultsFile, "Data points: %d\n", nEnergies);
 
-    return 0;
+    if (idx662 >= 0 && muRho_geant4[idx662] > 0)
+    {
+        double diff_662 = ((muRho_geant4[idx662] - muRho_NIST[idx662]) / muRho_NIST[idx662]) * 100.0;
+        fprintf(resultsFile, "\n662 keV Reference Point:\n");
+        fprintf(resultsFile, "- NIST μ/ρ: %.6f cm²/g\n", muRho_NIST[idx662]);
+        fprintf(resultsFile, "- GEANT4 μ/ρ: %.6f cm²/g\n", muRho_geant4[idx662]);
+        fprintf(resultsFile, "- Difference: %.1f%%\n", diff_662);
+    }
+    fclose(resultsFile);
+
+    printf("\nDatos guardados en:\n");
+    printf("- results/multi_energy/energy_spectrum_muscle_comparison.csv\n");
+    printf("- results/multi_energy/muscle_analysis_results.txt\n");
+    printf("\nAnalisis completado. Ejecutar Python para graficas.\n");
 }

@@ -5,15 +5,22 @@
 #include "globals.hh"
 #include "G4ParticleGun.hh"
 
-class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
+class PrimaryGeneratorMessenger;
+
+class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+{
 public:
   PrimaryGeneratorAction();
   virtual ~PrimaryGeneratorAction();
 
-  virtual void GeneratePrimaries(G4Event* event);
+  virtual void GeneratePrimaries(G4Event *event);
+
+  // Método para cambiar la energía dinámicamente
+  void SetParticleEnergy(G4double energy);
 
 private:
-  G4ParticleGun* particleGun;
+  G4ParticleGun *particleGun;
+  PrimaryGeneratorMessenger *messenger;
 };
 
 #endif // PRIMARYGENERATORACTION_HH

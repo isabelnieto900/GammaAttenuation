@@ -76,3 +76,8 @@ env/
 .env/
 
 analysis/multi_thickness_bone_analysis_simple
+
+#Macros 
+mac/*.mac
+CORRECCIONES_MULTI_ENERGY.md
+test_multi_energy.sh
