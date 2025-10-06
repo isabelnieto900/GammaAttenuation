@@ -48,13 +48,12 @@ G4*.dat
 *.gif
 *.csv
 *.pdf
-*.txt
 *.svg
 
 # Results directory - ignore everything except PNG files
 #!results/*.png
 #!results/**/*.png
-
+results/*
 # Configuraciones de IDE
 .vscode/
 .vs/
@@ -77,3 +76,8 @@ env/
 .env/
 
 analysis/multi_thickness_bone_analysis_simple
+
+#Macros 
+mac/*.mac
+CORRECCIONES_MULTI_ENERGY.md
+test_multi_energy.sh
