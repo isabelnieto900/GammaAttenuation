@@ -1,10 +1,11 @@
 #include "PhysicsList.hh"
+#include "G4EmStandardPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
 
 PhysicsList::PhysicsList()
     : G4VModularPhysicsList()
 {
-    // Registrar G4EmStandardPhysics_option4 (incluye dispersión Rayleigh y más procesos)
+    // Usar G4EmStandardPhysics_option4 que incluye dispersión Rayleigh
     RegisterPhysics(new G4EmStandardPhysics_option4());
 
     // Registrar decaimientos

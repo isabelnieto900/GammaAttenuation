@@ -52,8 +52,20 @@ for energy in "${ENERGIES[@]}"; do
         continue
     fi
     
+    # Determinar número de eventos basado en la energía
+    # Energías bajas necesitan más eventos para mejor estadística
+    if [ $energy -le 10 ]; then
+        NEVENTS=1000000  # 1M eventos para energías ≤ 10 keV
+    elif [ $energy -le 50 ]; then
+        NEVENTS=500000   # 500k eventos para 10-50 keV  
+    elif [ $energy -le 200 ]; then
+        NEVENTS=200000   # 200k eventos para 50-200 keV
+    else
+        NEVENTS=100000   # 100k eventos para energías altas
+    fi
+    
     # Crear archivo macro
-    echo "  Creando macro para energía ${energy} keV..."
+    echo "  Creando macro para energía ${energy} keV (${NEVENTS} eventos)..."
     cat > "$MAC_FILE" << EOF
 # Configuración para agua - ${energy} keV
 /control/verbose 0
@@ -71,11 +83,11 @@ for energy in "${ENERGIES[@]}"; do
 # Inicializar
 /run/initialize
 
-# Ejecutar simulación
-/run/beamOn 100000
+# Ejecutar simulación (eventos optimizados por energía)
+/run/beamOn ${NEVENTS}
 EOF
     
-    echo "  Simulando energía ${energy} keV (100k eventos)..."
+    echo "  Simulando energía ${energy} keV (${NEVENTS} eventos)..."
     cd build
     ./gammaAtt "../$MAC_FILE"
     cd ..

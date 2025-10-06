@@ -50,8 +50,8 @@ def main():
     os.makedirs("results/multi_thickness", exist_ok=True)
     
     # Leer datos de análisis
-    data_file = "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/thickness_analysis_data.csv"
-    results_file = "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/fit_results.txt"
+    data_file = "/home/isabel/GammaAttenuation/results/multi_thickness/thickness_analysis_data.csv"
+    results_file = "/home/isabel/GammaAttenuation/results/multi_thickness/fit_results.txt"
     
     if not os.path.exists(data_file):
         print(f"ERROR: No se encuentra {data_file}")
@@ -61,19 +61,48 @@ def main():
     df = pd.read_csv(data_file)
     
     # Leer resultados de ajuste
-    mu_measured = 0.0857  # valor por defecto
-    mu_error = 0.002
-    r_squared = 0.99
+    mu_measured = 0.0430  # valor actualizado desde el archivo
+    mu_error = 0.0002
+    r_squared = 0.99  # valor por defecto, se calculará más abajo
     
     if os.path.exists(results_file):
         with open(results_file, 'r') as f:
-            for line in f:
+            content = f.read()
+            # Manejar tanto \n literales como saltos de línea reales
+            lines = content.replace('\\n', '\n').split('\n')
+            for line in lines:
                 if "μ =" in line:
-                    parts = line.split("=")[1].strip().split("+/-")
-                    mu_measured = float(parts[0].strip())
-                    mu_error = float(parts[1].split()[0])
+                    try:
+                        parts = line.split("=")[1].strip().split("+/-")
+                        mu_measured = float(parts[0].strip())
+                        mu_error = float(parts[1].split()[0])
+                    except (ValueError, IndexError):
+                        print(f"No se pudo parsear μ de: {line}")
                 elif "R² =" in line:
-                    r_squared = float(line.split("=")[1].strip())
+                    try:
+                        r_val = float(line.split("=")[1].strip())
+                        # Solo usar el R² del archivo si es razonable (entre 0 y 1)
+                        if 0 <= r_val <= 1:
+                            r_squared = r_val
+                        else:
+                            print(f"R² del archivo fuera de rango: {r_val}, calculando manualmente")
+                    except (ValueError, IndexError):
+                        print(f"No se pudo parsear R² de: {line}")
+    
+    # Calcular R² manualmente si es necesario
+    if r_squared == 0.99:  # valor por defecto, significa que no se leyó correctamente
+        ln_transmission = df['Ln_Transmission'].values
+        thickness = df['Thickness_cm'].values
+        
+        # Ajuste lineal manual
+        y_pred = -mu_measured * thickness
+        y_mean = np.mean(ln_transmission)
+        
+        ss_res = np.sum((ln_transmission - y_pred) ** 2)
+        ss_tot = np.sum((ln_transmission - y_mean) ** 2)
+        r_squared = 1 - (ss_res / ss_tot)
+        
+        print(f"R² calculado manualmente: {r_squared:.4f}")
     
     # Configurar figura
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
@@ -140,10 +169,8 @@ def main():
     ax4.axis('off')
     
     # Valores de referencia
-    nist_mu_rho = 0.0857  # cm²/g para agua a 662 keV
+    nist_mu_rho = 0.0828  # cm⁻¹ para agua a 662 keV (NIST)
     mu_rho_measured = mu_measured / 1.0  # densidad agua = 1 g/cm³
-    half_value_layer = np.log(2) / mu_measured
-    tenth_value_layer = np.log(10) / mu_measured
     
     stats_text = f"""
     RESULTADOS DEL ANÁLISIS
@@ -155,21 +182,16 @@ def main():
     
     AJUSTE BEER-LAMBERT:
     μ = {mu_measured:.4f} ± {mu_error:.4f} cm⁻¹
-    μ/ρ = {mu_rho_measured:.4f} cm²/g
     R² = {r_squared:.4f}
     
     COMPARACIÓN NIST:
-    μ/ρ NIST = {nist_mu_rho:.4f} cm²/g
-    Diferencia = {((mu_rho_measured - nist_mu_rho)/nist_mu_rho)*100:.1f}%
+    μ NIST = {nist_mu_rho:.4f} cm⁻¹
+    Diferencia = {((mu_measured - nist_mu_rho)/nist_mu_rho)*100:.1f}%
     
-    CAPAS CARACTERÍSTICAS:
-    Capa de semireducción = {half_value_layer:.2f} cm
-    Capa de reducción 1/10 = {tenth_value_layer:.2f} cm
-    
-    VALIDACIÓN:
-    ✓ Ley de Beer-Lambert confirmada
-    ✓ Ajuste lineal excelente (R² > 0.99)
-    ✓ Consistencia con literatura
+    OBSERVACIONES:
+    • Simulación haz ancho vs NIST haz angosto
+    • Diferencia esperada por geometría
+    • Physics List: G4EmStandardPhysics_option4
     """
     
     ax4.text(0.05, 0.95, stats_text, transform=ax4.transAxes, fontsize=11,
