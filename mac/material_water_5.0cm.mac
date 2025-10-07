@@ -5,7 +5,7 @@
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial water
+/detector/setMaterial G4_WATER
 /detector/setThickness 5.0 cm
 
 # Inicializar

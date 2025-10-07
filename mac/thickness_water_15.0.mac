@@ -1,16 +1,15 @@
-# Configuración automática para water con espesor 15.0 cm
-/run/initialize
+# Configuración para water - 15.0cm
 /control/verbose 0
 /run/verbose 0
+/event/verbose 0
 /tracking/verbose 0
 
-/detector/setMaterial water
+# Configurar detector
+/detector/setMaterial G4_WATER
 /detector/setThickness 15.0 cm
 
-# Configurar fuente (Cs-137)
-/gun/particle gamma
-/gun/energy 662 keV
-/gun/position 0 0 -10 cm
-/gun/direction 0 0 1
+# Inicializar
+/run/initialize
 
+# Ejecutar simulación
 /run/beamOn 100000

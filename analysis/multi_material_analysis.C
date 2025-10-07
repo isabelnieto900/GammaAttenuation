@@ -20,8 +20,9 @@
 
 void multi_material_analysis()
 {
+    const char* results_dir = "results/multi_material";
     // Crear directorio de salida si no existe
-    gSystem->Exec("mkdir -p /home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material");
+    gSystem->Exec(Form("mkdir -p %s", results_dir));
 
     printf("\nAnalisis Multi-Material\n");
     printf("======================\n");
@@ -68,7 +69,7 @@ void multi_material_analysis()
     // Recolectar datos de archivos ROOT
     for (int i = 0; i < nMaterials; i++)
     {
-        TString filename = Form("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/material_%s_%.0fcm.root", materials[i].name, thickness);
+        TString filename = Form("%s/material_%s_%.0fcm.root", results_dir, materials[i].name, thickness);
 
         TFile *file = TFile::Open(filename);
         if (!file || file->IsZombie())
@@ -125,7 +126,8 @@ void multi_material_analysis()
     }
 
     // Crear archivo CSV con resultados comparativos
-    FILE *csvFile = fopen("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/material_comparison.csv", "w");
+    TString csv_path = Form("%s/material_comparison.csv", results_dir);
+    FILE *csvFile = fopen(csv_path.Data(), "w");
     fprintf(csvFile, "Material,Description,Density_gcm3,Transmission,Mu_cm1,MuRho_cm2g,Transmitted,Total\n");
     for (int i = 0; i < nMaterials; i++)
     {
@@ -162,7 +164,8 @@ void multi_material_analysis()
     printf("\\n");
 
     // Crear archivo de resultados de análisis
-    FILE *resultsFile = fopen("/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_material/analysis_results.txt", "w");
+    TString txt_path = Form("%s/analysis_results.txt", results_dir);
+    FILE *resultsFile = fopen(txt_path.Data(), "w");
     fprintf(resultsFile, "Multi-Material Analysis Results\\n");
     fprintf(resultsFile, "==============================\\n");
     fprintf(resultsFile, "Simulation Parameters:\\n");
@@ -191,7 +194,7 @@ void multi_material_analysis()
     fclose(resultsFile);
 
     printf("Datos guardados en:\\n");
-    printf("- ../results/multi_material/material_comparison.csv\\n");
-    printf("- ../results/multi_material/analysis_results.txt\\n");
+    printf("- %s/material_comparison.csv\\n", results_dir);
+    printf("- %s/analysis_results.txt\\n", results_dir);
     printf("\\nAnalisis completado. Ejecutar Python para graficas.\\n");
 }
