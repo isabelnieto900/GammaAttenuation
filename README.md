@@ -72,8 +72,8 @@ pip install matplotlib numpy pandas
 
 3. **Ejecutar análisis específico:**
 ```bash
-./scripts/run_multi_thickness.sh    # Análisis espesores
-./scripts/run_multi_material.sh <material>    # Análisis materiales  
+./scripts/Run_multi_thickness.sh <material>   # Análisis espesores
+./scripts/Run_multi_material.sh <material>    # Análisis materiales  
 ./scripts/run_multi_energy.sh       # Análisis energías
 ```
 
