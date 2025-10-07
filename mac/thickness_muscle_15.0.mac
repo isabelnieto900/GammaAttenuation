@@ -1,11 +1,11 @@
-# Configuración para músculo - 15.0cm
+# Configuración para muscle - 15.0cm
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial G4_MUSCLE_STRIATED_ICRU
+/detector/setMaterial G4_MUSCLE_SKELETAL_ICRP
 /detector/setThickness 15.0 cm
 
 # Inicializar
