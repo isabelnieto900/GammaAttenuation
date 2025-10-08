@@ -8,15 +8,13 @@
 EventAction::EventAction(RunAction *runAct)
     : G4UserEventAction(), runAction(runAct)
 {
-  outputFile.open("results/event_data.csv", std::ios::out); // sobrescribe cada corrida
-  if (!outputFile.is_open())
-    G4Exception("EventAction", "001", FatalException, "Cannot open output file");
+  // outputFile.open("results/event_data.csv", std::ios::out);
 }
 
 EventAction::~EventAction()
 {
-  if (outputFile.is_open())
-    outputFile.close();
+  // if (outputFile.is_open())
+  //   outputFile.close();
   G4cout << "EventAction deleted " << this << G4endl;
 }
 
@@ -46,5 +44,5 @@ void EventAction::EndOfEventAction(const G4Event *event)
     }
   }
 
-  outputFile << eventID << " , " << detected << "\n";
+  // outputFile << eventID << " , " << detected << "\n";
 }
