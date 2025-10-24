@@ -2,7 +2,7 @@
 
 """
 Visualización del análisis multi-material
-Comparación de atenuación gamma entre agua, músculo y hueso
+Comparación de atenuación gamma entre polietileno, concreto y plomo
 Autor: Isabel Nieto
 Fecha: Octubre 2025
 """
@@ -45,7 +45,7 @@ def plot_material_comparison():
     
     # Colores para cada material
     colors = ['#2E86AB', '#A23B72', '#F18F01']  # Azul, Magenta, Naranja
-    material_names = ['Agua', 'Músculo', 'Hueso']
+    material_names = ['Polietileno', 'Concreto', 'Plomo']
     
     # Gráfica 1: Ratio de transmisión por material
     bars1 = ax1.bar(material_names, transmission, color=colors, alpha=0.8, edgecolor='black')
@@ -75,9 +75,9 @@ def plot_material_comparison():
     ax2.grid(True, alpha=0.3)
     ax2.set_ylim(0, max(mu_values) * 1.2)
     
-    # Gráfica 3: Comparación relativa (normalizada al agua)
-    water_transmission = transmission[0]  # Primer valor (agua)
-    relative_transmission = transmission / water_transmission
+    # Gráfica 3: Comparación relativa (normalizada al polietileno)
+    polyethylene_transmission = transmission[0]  # Primer valor (polietileno)
+    relative_transmission = transmission / polyethylene_transmission
     
     bars3 = ax3.bar(material_names, relative_transmission, color=colors, alpha=0.8, edgecolor='black')
     
@@ -86,10 +86,10 @@ def plot_material_comparison():
         ax3.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02,
                 f'{value:.2f}x', ha='center', va='bottom', fontweight='bold')
     
-    ax3.set_title('Transmisión Relativa\n(Normalizada al Agua)', fontweight='bold', fontsize=12)
+    ax3.set_title('Transmisión Relativa\n(Normalizada al Polietileno)', fontweight='bold', fontsize=12)
     ax3.set_ylabel('Factor Relativo', fontsize=11)
     ax3.grid(True, alpha=0.3)
-    ax3.axhline(y=1.0, color='red', linestyle='--', alpha=0.7, label='Referencia (Agua)')
+    ax3.axhline(y=1.0, color='red', linestyle='--', alpha=0.7, label='Referencia (Polietileno)')
     ax3.legend()
     
     # Gráfica 4: Porcentaje de atenuación
@@ -131,7 +131,7 @@ def plot_material_comparison_with_nist():
     os.makedirs("results/multi_material", exist_ok=True)
     
     # Datos de la simulación (G4EmStandardPhysics_option4)
-    materials = ['Agua', 'Músculo', 'Hueso']
+    materials = ['Polietileno', 'Concreto', 'Plomo']
     simulation_mu = [0.0342, 0.0358, 0.0601]  # cm⁻¹
     simulation_transmission = [0.844, 0.839, 0.744]  # Calculados desde mu
     

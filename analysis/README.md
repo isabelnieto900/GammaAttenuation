@@ -5,7 +5,7 @@ Este directorio contiene los scripts de análisis para procesar los datos de sim
 ## Scripts ROOT (Archivos .C)
 
 ### multi_thickness_analysis.C
-**Propósito**: Analiza simulaciones con diferentes espesores de agua para verificar la ley de Beer-Lambert.
+**Propósito**: Analiza simulaciones con diferentes espesores de polietileno para verificar la ley de Beer-Lambert.
 
 **Funcionalidad**:
 - Procesa archivos ROOT de 8 espesores diferentes (0.5-15.0 cm)
@@ -16,13 +16,13 @@ Este directorio contiene los scripts de análisis para procesar los datos de sim
 **Uso**: Ejecutado automáticamente por `run_multi_thickness.sh`
 
 ### multi_material_analysis.C
-**Propósito**: Compara atenuación entre diferentes materiales a espesor fijo.
+**Propósito**: Compara atenuación entre diferentes materiales de blindaje a espesor fijo.
 
 **Funcionalidad**:
-- Analiza agua, músculo esquelético y hueso compacto (5 cm cada uno)
+- Analiza polietileno, concreto y plomo (5 cm cada uno)
 - Calcula μ y μ/ρ para cada material
 - Compara transmisiones y densidades
-- Genera análisis de correlaciones
+- Genera análisis de correlaciones para blindaje radiológico
 
 **Uso**: Ejecutado automáticamente por `run_multi_material.sh`
 
@@ -101,10 +101,10 @@ python analysis/plot_*.py
 ## Parámetros de Análisis
 
 ### Energía estándar: 662 keV (Cs-137)
-### Materiales estándar:
-- Agua: ρ = 1.0 g/cm³
-- Músculo: ρ = 1.05 g/cm³  
-- Hueso: ρ = 1.85 g/cm³
+### Materiales de blindaje estándar:
+- Polietileno (HDPE): ρ = 0.95 g/cm³
+- Concreto: ρ = 2.3 g/cm³  
+- Plomo (Pb): ρ = 11.35 g/cm³
 
 ### Espesores estándar: 0.5, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0 cm
 

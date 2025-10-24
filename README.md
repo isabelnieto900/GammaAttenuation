@@ -1,6 +1,6 @@
 # Gamma Attenuation Simulation
 
-Este proyecto simula la atenuación de rayos gamma usando GEANT4 para estudiar la interacción de radiación gamma con diferentes materiales y espesores.
+Este proyecto simula la atenuación de rayos gamma usando GEANT4 para estudiar la interacción de radiación gamma con materiales de blindaje (polietileno, concreto, plomo) a diferentes espesores y energías.
 
 ## Requisitos
 
@@ -45,13 +45,13 @@ GammaAtenuation/
 ## Scripts de Análisis
 
 ### run_multi_thickness.sh
-Ejecuta simulaciones con diferentes espesores de agua (0.5-15.0 cm) para verificar la ley de Beer-Lambert.
+Ejecuta simulaciones con diferentes espesores de polietileno (0.5-15.0 cm) para verificar la ley de Beer-Lambert.
 
 ### run_multi_material.sh  
-Compara atenuación entre agua, músculo esquelético y hueso compacto a espesor fijo de 5 cm.
+Compara atenuación entre polietileno, concreto y plomo como materiales de blindaje a espesor fijo de 5 cm.
 
 ### run_multi_energy.sh
-Analiza atenuación con diferentes energías de rayos gamma para estudiar dependencia energética.
+Analiza atenuación con diferentes energías de rayos gamma (1 keV - 20 MeV) para estudiar dependencia energética.
 
 ### run_complete_analysis.sh
 Ejecuta los tres análisis anteriores secuencialmente.

@@ -1,17 +1,7 @@
-/* ------- ANÁLISIS MULTI-MATERIAL    // Inicializar estructura de materiales
-    materials[0].name = "water";
-    materials[0].description = "Agua (H2O)";
-    materials[0].density = 1.0;
-
-    materials[1].name = "muscle";
-    materials[1].description = "Músculo esquelético";
-    materials[1].density = 1.05;
-
-    materials[2].name = "bone";
-    materials[2].description = "Hueso compacto";
-    materials[2].density = 1.92;Comparación de atenuación gamma entre diferentes materiales
+/* ------- ANÁLISIS MULTI-MATERIAL -------
+ * Comparación de atenuación gamma entre diferentes materiales de blindaje
  * Espesor fijo: 5.0 cm, Energía: 662 keV (Cs-137)
- * Materiales: Agua, Músculo, Hueso
+ * Materiales: Polietileno, Concreto, Plomo
  * Autor: Isabel Nieto, PoPPop21
  * Fecha: Octubre 2025
  * --------------------------------------
@@ -43,17 +33,17 @@ void multi_material_analysis()
     MaterialData materials[nMaterials];
 
     // Inicializar estructura de materiales
-    strcpy(materials[0].name, "water");
-    strcpy(materials[0].description, "Agua (H2O)");
-    materials[0].density = 1.0;
+    strcpy(materials[0].name, "polyethylene");
+    strcpy(materials[0].description, "Polietileno (HDPE)");
+    materials[0].density = 0.95;
 
-    strcpy(materials[1].name, "muscle");
-    strcpy(materials[1].description, "Músculo esquelético");
-    materials[1].density = 1.05;
+    strcpy(materials[1].name, "concrete");
+    strcpy(materials[1].description, "Concreto estándar");
+    materials[1].density = 2.3;
 
-    strcpy(materials[2].name, "bone");
-    strcpy(materials[2].description, "Hueso compacto");
-    materials[2].density = 1.85;
+    strcpy(materials[2].name, "lead");
+    strcpy(materials[2].description, "Plomo (Pb)");
+    materials[2].density = 11.35;
 
     // Parámetros de simulación
     double thickness = 5.0;    // cm
@@ -76,20 +66,20 @@ void multi_material_analysis()
             printf("WARNING: No se puede abrir %s, usando datos por defecto\n", filename.Data());
 
             // Usar datos típicos por defecto si no hay archivo
-            if (strcmp(materials[i].name, "water") == 0)
+            if (strcmp(materials[i].name, "polyethylene") == 0)
             {
                 materials[i].total = 100000;
-                materials[i].transmitted = 84415;
+                materials[i].transmitted = 85000; // Estimado
             }
-            else if (strcmp(materials[i].name, "muscle") == 0)
+            else if (strcmp(materials[i].name, "concrete") == 0)
             {
                 materials[i].total = 100000;
-                materials[i].transmitted = 83910;
+                materials[i].transmitted = 70000; // Estimado
             }
-            else if (strcmp(materials[i].name, "bone") == 0)
+            else if (strcmp(materials[i].name, "lead") == 0)
             {
                 materials[i].total = 100000;
-                materials[i].transmitted = 74444;
+                materials[i].transmitted = 10000; // Estimado - alta atenuación
             }
         }
         else
@@ -186,8 +176,8 @@ void multi_material_analysis()
     fprintf(resultsFile, "- Attenuation factor: %.1fx\\n", max_mu / min_mu);
     fprintf(resultsFile, "\\nPhysical Interpretation:\\n");
     fprintf(resultsFile, "- Higher density materials show greater attenuation\\n");
-    fprintf(resultsFile, "- Bone shows highest attenuation due to calcium content\\n");
-    fprintf(resultsFile, "- Results consistent with medical imaging applications\\n");
+    fprintf(resultsFile, "- Lead shows highest attenuation due to high atomic number\\n");
+    fprintf(resultsFile, "- Results consistent with radiation shielding applications\\n");
     fclose(resultsFile);
 
     printf("Datos guardados en:\\n");
