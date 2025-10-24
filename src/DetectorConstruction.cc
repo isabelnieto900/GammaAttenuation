@@ -18,10 +18,10 @@ Fecha: Octubre 2025
 
 /* Defino los valores por defecto que tenrá mi detector cuando arranque la simualción*/
 DetectorConstruction::DetectorConstruction()
-    : materialType("water"), thickness(5.0 * cm)
+    : materialType("polyethylene"), thickness(5.0 * cm)
 {
     messenger = new DetectorMessenger(this);
-} // Material inicial es agua, con espesor de 5cm.
+} // Material inicial es polietileno, con espesor de 5cm.
 
 DetectorConstruction::~DetectorConstruction()
 {
@@ -53,47 +53,20 @@ G4Material *DetectorConstruction::DefineMaterials()
     G4String m = materialType;
     // opcional: forzar minúsculas si quieres (requiere transformación manual)
 
-    if (m == "water")
+    if (m == "polyethylene")
     {
-        material = nist->FindOrBuildMaterial("G4_WATER");
-    }
-    else if (m == "muscle")
-    {
-        // Segun ICRU Report 44
-        G4double density = 1.05 * g / cm3;
-        material = new G4Material("muscle", density, 9);
-        material->AddElement(nist->FindOrBuildElement("H"), 10.2 * perCent);
-        material->AddElement(nist->FindOrBuildElement("C"), 14.3 * perCent);
-        material->AddElement(nist->FindOrBuildElement("N"), 3.4 * perCent);
-        material->AddElement(nist->FindOrBuildElement("O"), 71.0 * perCent);
-        material->AddElement(nist->FindOrBuildElement("Na"), 0.1 * perCent);
-        material->AddElement(nist->FindOrBuildElement("P"), 0.2 * perCent);
-        material->AddElement(nist->FindOrBuildElement("S"), 0.5 * perCent);
-        material->AddElement(nist->FindOrBuildElement("Cl"), 0.1 * perCent);
-        material->AddElement(nist->FindOrBuildElement("K"), 0.2 * perCent);
-    }
-    else if (m == "bone")
-    {
-        // Hueso segun ICRU report 44
-        G4double density = 1.92 * g / cm3;
-        material = new G4Material("bone", density, 9);
-        material->AddElement(nist->FindOrBuildElement("H"), 3.4 * perCent);
-        material->AddElement(nist->FindOrBuildElement("C"), 15.5 * perCent);
-        material->AddElement(nist->FindOrBuildElement("N"), 4.2 * perCent);
-        material->AddElement(nist->FindOrBuildElement("O"), 43.5 * perCent);
-        material->AddElement(nist->FindOrBuildElement("Na"), 0.1 * perCent);
-        material->AddElement(nist->FindOrBuildElement("Mg"), 0.2 * perCent);
-        material->AddElement(nist->FindOrBuildElement("P"), 16.9 * perCent);
-        material->AddElement(nist->FindOrBuildElement("S"), 0.2 * perCent);
-        material->AddElement(nist->FindOrBuildElement("Ca"), 16.0 * perCent);
-    }
-    else if (m == "lead")
-    {
-        material = nist->FindOrBuildMaterial("G4_Pb");
+        // Polietileno de alta densidad (HDPE)
+        material = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
     }
     else if (m == "concrete")
     {
+        // Concreto estándar
         material = nist->FindOrBuildMaterial("G4_CONCRETE");
+    }
+    else if (m == "lead")
+    {
+        // Plomo para blindaje
+        material = nist->FindOrBuildMaterial("G4_Pb");
     }
     else
     {
@@ -101,8 +74,8 @@ G4Material *DetectorConstruction::DefineMaterials()
         material = nist->FindOrBuildMaterial(m);
         if (!material)
         {
-            G4cerr << "Material " << m << " no reconocido. Usando agua por defecto." << G4endl;
-            material = nist->FindOrBuildMaterial("G4_WATER");
+            G4cerr << "Material " << m << " no reconocido. Usando polietileno por defecto." << G4endl;
+            material = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
         }
     }
 
@@ -110,11 +83,11 @@ G4Material *DetectorConstruction::DefineMaterials()
     if (!material)
     {
         G4cerr << "ERROR: FindOrBuildMaterial devolvió NULL para: " << m << G4endl;
-        G4cerr << " -> Haciendo fallback a G4_WATER para evitar crash." << G4endl;
-        material = nist->FindOrBuildMaterial("G4_WATER");
+        G4cerr << " -> Haciendo fallback a G4_POLYETHYLENE para evitar crash." << G4endl;
+        material = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
         if (!material)
         {
-            G4cerr << "ERROR CRÍTICO: no se pudo cargar G4_WATER. Revisa instalación de Geant4." << G4endl;
+            G4cerr << "ERROR CRÍTICO: no se pudo cargar G4_POLYETHYLENE. Revisa instalación de Geant4." << G4endl;
         }
     }
     else
@@ -144,11 +117,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     logicWorld->SetVisAttributes(G4VisAttributes::GetInvisible()); // Invisible
 
     // --- 2. Materiales absorbentes ---
-    G4Material *absorber_mat = DefineMaterials(); // nist->FindOrBuildMaterial("G4_WATER"); -> Material absorbente
+    G4Material *absorber_mat = DefineMaterials(); // Material absorbente de blindaje
     if (!absorber_mat)
     {
-        G4cerr << "Fatal: absorber_mat es NULL. Usando G4_WATER temporalmente." << G4endl;
-        absorber_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+        G4cerr << "Fatal: absorber_mat es NULL. Usando G4_POLYETHYLENE temporalmente." << G4endl;
+        absorber_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYETHYLENE");
     }
     G4double absorber_thickness = thickness; // 5 cm -> espesor del material absorbente
     auto solidAbs = new G4Box("Absorber", 10 * cm, 10 * cm, absorber_thickness / 2.0);
@@ -157,18 +130,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
     // Colores segun material
     G4VisAttributes *visAbs;
-    if (materialType == "water")
-        visAbs = new G4VisAttributes(G4Colour(0, 0, 1, 0.4)); // Azul
-    else if (materialType == "muscle")
-        visAbs = new G4VisAttributes(G4Colour(1, 0.8, 0.6, 0.4)); // Color carne
-    else if (materialType == "bone")
-        visAbs = new G4VisAttributes(G4Colour(1, 1, 0.8, 0.4)); // Color hueso
-    else if (materialType == "lead")
-        visAbs = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5, 0.4)); // Gris
+    if (materialType == "polyethylene")
+        visAbs = new G4VisAttributes(G4Colour(1, 1, 1, 0.4)); // Blanco/transparente
     else if (materialType == "concrete")
         visAbs = new G4VisAttributes(G4Colour(0.6, 0.6, 0.6, 0.4)); // Gris claro
+    else if (materialType == "lead")
+        visAbs = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3, 0.6)); // Gris oscuro
     else
-        visAbs = new G4VisAttributes(G4Colour(0, 0, 1, 0.4)); // Azul por defecto
+        visAbs = new G4VisAttributes(G4Colour(1, 1, 1, 0.4)); // Blanco por defecto
     logicAbs->SetVisAttributes(visAbs);
 
     // --- 3. Detector ---

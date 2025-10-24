@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Script Multi-Espesor
-# Análisis de atenuación gamma vs espesor para hueso
+# Análisis de atenuación gamma vs espesor para plomo
 # Ejecuta análisis ROOT + visualización Python
 
 echo "========================================"
 echo "  ANÁLISIS MULTI-ESPESOR"
 echo "========================================"
-echo "Material: Hueso Compacto"
+echo "Material: Plomo (Pb)"
 echo "Análisis: Ley Beer-Lambert vs espesor"
 echo "Rango: 0.5 - 15.0 cm"
 echo ""
@@ -44,8 +44,8 @@ THICKNESS_VALUES=(0.5 1.0 2.0 3.0 5.0 7.5 10.0 15.0)
 echo "Ejecutando simulaciones GEANT4 para ${#THICKNESS_VALUES[@]} espesores..."
 
 for thickness in "${THICKNESS_VALUES[@]}"; do
-    MAC_FILE="../mac/thickness_bone_${thickness}.mac"
-    DATA_FILE="../results/data_thickness_bone_${thickness}.root"
+    MAC_FILE="../mac/thickness_lead_${thickness}.mac"
+    DATA_FILE="../results/data_thickness_lead_${thickness}.root"
     
     # Verificar si ya existe el archivo de datos
     if [ -f "$DATA_FILE" ]; then
@@ -57,14 +57,14 @@ for thickness in "${THICKNESS_VALUES[@]}"; do
     if [ ! -f "$MAC_FILE" ]; then
         echo "  Creando macro para espesor ${thickness} cm..."
         cat > "$MAC_FILE" << EOF
-# Configuración para hueso - ${thickness}cm
+# Configuración para plomo - ${thickness}cm
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial G4_BONE_COMPACT_ICRU
+/detector/setMaterial lead
 /detector/setThickness ${thickness} cm
 
 # Inicializar
@@ -80,8 +80,8 @@ EOF
     ./gammaAtt "$MAC_FILE" > /dev/null 2>&1
     
     # Mover archivo de datos generado al directorio results
-    if [ -f "../results/data_run_G4_BONE_COMPACT_ICRU.root" ]; then
-        mv "../results/data_run_G4_BONE_COMPACT_ICRU.root" "$DATA_FILE"
+    if [ -f "../results/data_run_lead.root" ]; then
+        mv "../results/data_run_lead.root" "$DATA_FILE"
         echo "    Completado: $DATA_FILE"
     else
         echo "    WARNING: No se generó archivo de datos"
@@ -98,14 +98,14 @@ echo "-----------------------------------"
 
 # Ejecutar análisis ROOT
 cd /home/isabel/GammaAttenuation
-root -l -b -q "analysis/multi_thickness_bone_analysis.C"
+root -l -b -q "analysis/multi_thickness_lead_analysis.C"
 
 echo "Paso 3: Generando visualizaciones..."
 echo "-----------------------------------"
 
 # Activar entorno Python y ejecutar visualización
 source GA/bin/activate
-python3 analysis/plot_multi_thickness_bone.py
+python3 analysis/plot_multi_thickness_lead.py
 
 echo ""
 echo "=========================================="
@@ -116,9 +116,9 @@ echo "Datos generados en:"
 echo "  /home/isabel/GammaAttenuation/results/multi_thickness/"
 echo ""
 echo "Archivos generados:"
-echo "  - thickness_bone_analysis_data.csv"
-echo "  - fit_bone_results.txt"
-echo "  - thickness_bone_analysis_elegant.png"
-echo "  - thickness_bone_analysis_elegant.pdf"
-echo "  - thickness_bone_analysis_elegant.svg"
+echo "  - thickness_lead_analysis_data.csv"
+echo "  - fit_lead_results.txt"
+echo "  - thickness_lead_analysis_elegant.png"
+echo "  - thickness_lead_analysis_elegant.pdf"
+echo "  - thickness_lead_analysis_elegant.svg"
 echo ""

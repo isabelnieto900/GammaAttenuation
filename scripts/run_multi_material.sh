@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Script Multi-Material
-# Comparación de atenuación entre agua, músculo y hueso
+# Comparación de atenuación entre materiales de blindaje
 # Ejecuta análisis ROOT + visualización Python
 
 echo "========================================"
 echo "  ANÁLISIS MULTI-MATERIAL"
 echo "========================================"
-echo "Materiales: Agua, Músculo, Hueso"
+echo "Materiales: Polietileno, Concreto, Plomo"
 echo "Espesor: 5.0 cm fijo"
-echo "Análisis: Comparación propiedades"
+echo "Análisis: Comparación propiedades de blindaje"
 echo ""
 
 # Verificar que ROOT esté disponible
@@ -42,9 +42,9 @@ fi
 
 # Materiales a simular (espesor fijo 5.0 cm)
 declare -A MATERIALS
-MATERIALS["water"]="G4_WATER"
-MATERIALS["muscle"]="G4_MUSCLE_SKELETAL_ICRP"
-MATERIALS["bone"]="G4_BONE_COMPACT_ICRU"
+MATERIALS["polyethylene"]="polyethylene"
+MATERIALS["concrete"]="concrete"
+MATERIALS["lead"]="lead"
 
 THICKNESS="5.0"
 

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Script Multi-Energía para Agua
+# Script Multi-Energía para Polietileno
 # Ejecuta simulaciones GEANT4 reales para diferentes energías
 # Analiza coeficientes de atenuación vs energía
 
 echo "========================================"
-echo "  ANÁLISIS MULTI-ENERGÍA: AGUA"
+echo "  ANÁLISIS MULTI-ENERGÍA: POLIETILENO"
 echo "========================================"
-echo "Material: Agua (H2O)"
+echo "Material: Polietileno (HDPE)"
 echo "Análisis: Coeficientes de atenuación vs energía"
 echo "Rango: 1 keV - 20 MeV"
 echo ""
@@ -43,8 +43,8 @@ ENERGIES=(1 5 10 20 30 50 80 100 150 200 300 400 500 600 662 800 1000 1250 1500 
 echo "Ejecutando simulaciones GEANT4 para ${#ENERGIES[@]} energías..."
 
 for energy in "${ENERGIES[@]}"; do
-    MAC_FILE="mac/energy_water_${energy}keV.mac"
-    DATA_FILE="results/data_energy_water_${energy}keV.root"
+    MAC_FILE="mac/energy_polyethylene_${energy}keV.mac"
+    DATA_FILE="results/data_energy_polyethylene_${energy}keV.root"
     
     # Verificar si ya existe el archivo de datos
     if [ -f "$DATA_FILE" ]; then
@@ -67,14 +67,14 @@ for energy in "${ENERGIES[@]}"; do
     # Crear archivo macro
     echo "  Creando macro para energía ${energy} keV (${NEVENTS} eventos)..."
     cat > "$MAC_FILE" << EOF
-# Configuración para agua - ${energy} keV
+# Configuración para polietileno - ${energy} keV
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial water
+/detector/setMaterial polyethylene
 /detector/setThickness 5.0 cm
 
 # Configurar energía del fotón
@@ -92,8 +92,8 @@ EOF
     ./gammaAtt "../$MAC_FILE"
     cd ..
     
-    # GEANT4 genera el archivo como data_run_water.root, necesitamos renombrarlo
-    TEMP_FILE="results/data_run_water.root"
+    # GEANT4 genera el archivo como data_run_polyethylene.root, necesitamos renombrarlo
+    TEMP_FILE="results/data_run_polyethylene.root"
     if [ -f "$TEMP_FILE" ]; then
         mv "$TEMP_FILE" "$DATA_FILE"
         echo "  Archivo renombrado: $TEMP_FILE -> $DATA_FILE"

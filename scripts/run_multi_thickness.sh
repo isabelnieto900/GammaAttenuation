@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Script Multi-Espesor
-# Análisis de atenuación gamma vs espesor para agua
-# Ejecuta análisif [ ! -f "/home/isabel/Physiscs_projects/GammaAtenuation/results/multi_thickness/thickness_analysis_data.csv" ]; thens ROOT + visualización Python
+# Análisis de atenuación gamma vs espesor para polietileno
+# Ejecuta análisis ROOT + visualización Python
 
 echo "========================================"
 echo "  ANÁLISIS MULTI-ESPESOR"
 echo "========================================"
-echo "Material: Agua (H2O)"
+echo "Material: Polietileno (HDPE)"
 echo "Análisis: Ley Beer-Lambert vs espesor"
 echo "Rango: 0.5 - 15.0 cm"
 echo ""
@@ -44,8 +44,8 @@ THICKNESS_VALUES=(0.5 1.0 2.0 3.0 5.0 7.5 10.0 15.0)
 echo "Ejecutando simulaciones GEANT4 para ${#THICKNESS_VALUES[@]} espesores..."
 
 for thickness in "${THICKNESS_VALUES[@]}"; do
-    MAC_FILE="../mac/thickness_water_${thickness}.mac"
-    DATA_FILE="../results/data_thickness_water_${thickness}.root"
+    MAC_FILE="../mac/thickness_polyethylene_${thickness}.mac"
+    DATA_FILE="../results/data_thickness_polyethylene_${thickness}.root"
     
     # Verificar si ya existe el archivo de datos
     if [ -f "$DATA_FILE" ]; then
@@ -57,14 +57,14 @@ for thickness in "${THICKNESS_VALUES[@]}"; do
     if [ ! -f "$MAC_FILE" ]; then
         echo "  Creando macro para espesor ${thickness} cm..."
         cat > "$MAC_FILE" << EOF
-# Configuración para agua - ${thickness}cm
+# Configuración para polietileno - ${thickness}cm
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial G4_WATER
+/detector/setMaterial polyethylene
 /detector/setThickness ${thickness} cm
 
 # Inicializar
@@ -80,8 +80,8 @@ EOF
     ./gammaAtt "$MAC_FILE" > /dev/null 2>&1
     
     # Mover archivo de datos generado al directorio results
-    if [ -f "../results/data_run_water.root" ]; then
-        mv "../results/data_run_water.root" "$DATA_FILE"
+    if [ -f "../results/data_run_polyethylene.root" ]; then
+        mv "../results/data_run_polyethylene.root" "$DATA_FILE"
         echo "    Completado: $DATA_FILE"
     else
         echo "    WARNING: No se generó archivo de datos"

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Script Multi-Energía para Hueso Compacto
+# Script Multi-Energía para Plomo
 # Ejecuta simulaciones GEANT4 reales para diferentes energías
 # Analiza coeficientes de atenuación vs energía
 
 echo "========================================"
-echo "  ANÁLISIS MULTI-ENERGÍA: HUESO"
+echo "  ANÁLISIS MULTI-ENERGÍA: PLOMO"
 echo "========================================"
-echo "Material: Hueso compacto"
+echo "Material: Plomo (Pb)"
 echo "Análisis: Coeficientes de atenuación vs energía"
 echo "Rango: 1 keV - 20 MeV"
 echo ""
@@ -43,8 +43,8 @@ ENERGIES=(1 5 10 20 30 50 80 100 150 200 300 400 500 600 662 800 1000 1250 1500 
 echo "Ejecutando simulaciones GEANT4 para ${#ENERGIES[@]} energías..."
 
 for energy in "${ENERGIES[@]}"; do
-    MAC_FILE="mac/energy_bone_${energy}keV.mac"
-    DATA_FILE="results/data_energy_bone_${energy}keV.root"
+    MAC_FILE="mac/energy_lead_${energy}keV.mac"
+    DATA_FILE="results/data_energy_lead_${energy}keV.root"
     
     # Verificar si ya existe el archivo de datos
     if [ -f "$DATA_FILE" ]; then
@@ -55,14 +55,14 @@ for energy in "${ENERGIES[@]}"; do
     # Crear archivo macro
     echo "  Creando macro para energía ${energy} keV..."
     cat > "$MAC_FILE" << EOF
-# Configuración para hueso - ${energy} keV
+# Configuración para plomo - ${energy} keV
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial bone
+/detector/setMaterial lead
 /detector/setThickness 5.0 cm
 
 # Configurar energía del fotón
@@ -94,7 +94,7 @@ echo "Paso 2: Ejecutando análisis ROOT..."
 echo "-----------------------------------"
 
 # Ejecutar análisis ROOT
-root -l -b -q "analysis/multi_energy_bone_analysis.C"
+root -l -b -q "analysis/multi_energy_lead_analysis.C"
 
 echo "Análisis ROOT completado"
 echo ""
@@ -107,7 +107,7 @@ echo "Activando entorno Python..."
 source GA/bin/activate
 
 echo "Generando gráficas..."
-python3 analysis/plot_multi_energy_bone.py
+python3 analysis/plot_multi_energy_lead.py
 
 echo ""
 echo "=========================================="
@@ -118,8 +118,8 @@ echo "Datos generados en:"
 echo "  results/multi_energy/"
 echo ""
 echo "Archivos generados:"
-echo "  - energy_spectrum_bone_comparison.csv"
-echo "  - multi_energy_bone_analysis.png"
-echo "  - multi_energy_bone_analysis.pdf"
-echo "  - multi_energy_bone_analysis.svg"
+echo "  - energy_spectrum_lead_comparison.csv"
+echo "  - multi_energy_lead_analysis.png"
+echo "  - multi_energy_lead_analysis.pdf"
+echo "  - multi_energy_lead_analysis.svg"
 echo ""

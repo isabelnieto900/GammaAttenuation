@@ -15,11 +15,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction *detector)
 
     // Comando para cambiar material
     materialCmd = new G4UIcmdWithAString("/detector/setMaterial", this);
-    materialCmd->SetGuidance("Selecciona el material del absorbedor");
-    materialCmd->SetGuidance("Materiales predefinidos: water, muscle, bone, concrete, lead");
-    materialCmd->SetGuidance("También acepta nombres directos de materiales G4 (ej: G4_WATER)");
+    materialCmd->SetGuidance("Selecciona el material del absorbedor (blindaje)");
+    materialCmd->SetGuidance("Materiales predefinidos: polyethylene, concrete, lead");
+    materialCmd->SetGuidance("También acepta nombres directos de materiales G4 (ej: G4_POLYETHYLENE)");
     materialCmd->SetParameterName("material", false);
-    materialCmd->SetDefaultValue("water");
+    materialCmd->SetDefaultValue("polyethylene");
     // Removemos SetCandidates para permitir cualquier material
     materialCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 

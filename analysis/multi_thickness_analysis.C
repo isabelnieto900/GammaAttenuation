@@ -1,10 +1,7 @@
 /* ------- ANÁLISIS MULTI-ESPESOR -------
- * Análisis de atenuación gamma vs espesor para agua
-     printf("\nResultados del Ajuste Beer-Lambert:\n");
-    printf("μ medido = %.4f +/- %.4f cm⁻¹\n", mu_measured, mu_error);
-    printf("χ²/ndf = %.2f/%d = %.3f\n", chi2, ndf, chi2 / ndf);
-    printf("R² = %.4f\n", r2);tudio de la Ley de Beer-Lambert
- * Material: Agua (H2O)
+ * Análisis de atenuación gamma vs espesor para polietileno
+ * Estudio de la Ley de Beer-Lambert
+ * Material: Polietileno (HDPE)
  * Autor: Isabel Nieto, PoPPop21
  * Fecha: Octubre 2025
  * --------------------------------------
@@ -26,14 +23,14 @@ void multi_thickness_analysis()
     double lnTransmission[nPoints] = {0};
     double errors[nPoints] = {0};
 
-    // Material: agua
-    const char *material = "water";
+    // Material: polietileno
+    const char *material = "polyethylene";
 
     // Crear directorio de salida si no existe
-    gSystem->Exec("mkdir -p /home/isabel/GammaAttenuation/results/multi_thickness")
+    gSystem->Exec("mkdir -p /home/isabel/GammaAttenuation/results/multi_thickness");
 
-        printf("\nAnalisis Multi-Espesor - Agua\n");
-    printf("===============================\n");
+    printf("\nAnalisis Multi-Espesor - Polietileno\n");
+    printf("====================================\n");
 
     // Recolectar datos de archivos ROOT
     for (int i = 0; i < nPoints; i++)
@@ -106,7 +103,7 @@ void multi_thickness_analysis()
     FILE *resultsFile = fopen("/home/isabel/GammaAttenuation/results/multi_thickness/fit_results.txt", "w");
     fprintf(resultsFile, "Multi-Thickness Analysis Results\n");
     fprintf(resultsFile, "==============================\n");
-    fprintf(resultsFile, "Material: Water (H2O)\n");
+    fprintf(resultsFile, "Material: Polyethylene (HDPE)\n");
     fprintf(resultsFile, "Energy: 662 keV (Cs-137)\n");
     fprintf(resultsFile, "Thickness range: %.1f - %.1f cm\n", thickness[0], thickness[nPoints - 1]);
     fprintf(resultsFile, "\nBeer-Lambert Fit Results:\n");
