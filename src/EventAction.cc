@@ -37,9 +37,19 @@ void EventAction::EndOfEventAction(const G4Event *event)
       auto hitsCollection = static_cast<MiHitsCollection *>(HCE->GetHC(hcID));
       if (hitsCollection && hitsCollection->GetSize() > 0)
       {
-        detected = 1;
-        // aaa
-        runAction->AddTransmittedEvent();
+        // Iterar sobre los hits para encontrar un fotón primario no interactuante
+        for (G4int i = 0; i < hitsCollection->GetSize(); ++i)
+        {
+          MiHit *hit = (*hitsCollection)[i];
+          // Un fotón primario no interactuante tendrá TrackID = 1 y PDGEncoding = 22 (fotón)
+          // que llega al detector. La energía depositada ya no es un criterio.
+          if (hit->GetTrackID() == 1 && hit->GetParticleID() == 22)
+          {
+            detected = 1;
+            runAction->AddTransmittedEvent();
+            break; // Solo necesitamos contar un fotón transmitido por evento
+          }
+        }
       }
     }
   }

@@ -7,8 +7,11 @@ Fecha: Octubre 2025
 #include "G4Run.hh"
 #include "G4ios.hh"
 #include "G4RunManager.hh"
+#include "G4LogicalVolumeStore.hh" // Para buscar volúmenes lógicos
+#include "G4LogicalVolume.hh"      // Para usar G4LogicalVolume
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 #ifdef USE_ROOT
 #include "TFile.h"
@@ -47,14 +50,25 @@ void RunAction::BeginOfRunAction(const G4Run *run)
   totalEvents = run->GetNumberOfEventToBeProcessed();
   transmittedEvents = 0;
 
+  // --- Obtener el material de forma segura ---
+  G4String materialName = "Unknown";
+  G4LogicalVolume* absorberLV = G4LogicalVolumeStore::GetInstance()->GetVolume("Absorber");
+  if (absorberLV) {
+      G4Material* material = absorberLV->GetMaterial();
+      if (material) {
+          materialName = material->GetName();
+      }
+  }
+  // -----------------------------------------
+
   std::cout << "=== Comenzando Run " << run->GetRunID() << " ===" << std::endl;
-  std::cout << "Material: " << detector->GetMaterial() << std::endl;
+  std::cout << "Material: " << materialName << std::endl;
   std::cout << "Espesor: " << detector->GetThickness() / CLHEP::cm << " cm" << std::endl;
   std::cout << "Eventos totales: " << totalEvents << std::endl;
 
 #ifdef USE_ROOT
   // Crear archivo ROOT simple
-  TString rootFileName = TString::Format("results/data_run_%s.root", detector->GetMaterial().c_str());
+  TString rootFileName = TString::Format("results/data_run_%s.root", materialName.c_str());
   rootFile = new TFile(rootFileName.Data(), "RECREATE");
 
   // Crear Tree simple para datos
@@ -65,7 +79,7 @@ void RunAction::BeginOfRunAction(const G4Run *run)
 
   // Variables básicas
   runData.runID = run->GetRunID();
-  strncpy(runData.material, detector->GetMaterial().c_str(), 49);
+  strncpy(runData.material, materialName.c_str(), 49);
   runData.material[49] = '\0';
   runData.thickness = detector->GetThickness() / CLHEP::cm;
   runData.totalEvents = totalEvents;
@@ -85,7 +99,7 @@ void RunAction::BeginOfRunAction(const G4Run *run)
   // Preparar archivo de resultados
   std::ofstream resultsFile("results/results_summary.txt", std::ios::app);
   resultsFile << "\n=== RUN " << run->GetRunID() << " ===\n";
-  resultsFile << "Material: " << detector->GetMaterial() << "\n";
+  resultsFile << "Material: " << materialName << "\n";
   resultsFile << "Espesor: " << detector->GetThickness() / CLHEP::cm << " cm\n";
   resultsFile << "Eventos: " << totalEvents << "\n";
   resultsFile.close();
@@ -93,6 +107,17 @@ void RunAction::BeginOfRunAction(const G4Run *run)
 
 void RunAction::EndOfRunAction(const G4Run *run)
 {
+  // --- Obtener el material de forma segura (de nuevo) ---
+  // Es necesario porque la variable de BeginOfRunAction es local.
+  G4String materialName = "Unknown";
+  G4LogicalVolume* absorberLV = G4LogicalVolumeStore::GetInstance()->GetVolume("Absorber");
+  if (absorberLV) {
+      G4Material* material = absorberLV->GetMaterial();
+      if (material) {
+          materialName = material->GetName();
+      }
+  }
+
   G4double transmissionRatio = (G4double)transmittedEvents / totalEvents;
   G4double attenuationCoeff = (transmittedEvents > 0) ? -std::log(transmissionRatio) / (detector->GetThickness() / CLHEP::cm) : 999.0;
 
@@ -124,7 +149,7 @@ void RunAction::EndOfRunAction(const G4Run *run)
 
   G4cout << "ROOT: Datos guardados" << G4endl;
   G4cout << "ROOT: Archivo: data_run" << run->GetRunID() << ".root" << G4endl;
-  G4cout << "ROOT: Datos guardados en data_run_" << detector->GetMaterial() << ".root" << G4endl;
+  G4cout << "ROOT: Datos guardados en data_run_" << materialName << ".root" << G4endl;
 #endif
 
   // Guardar resultados finales
@@ -136,8 +161,7 @@ void RunAction::EndOfRunAction(const G4Run *run)
 
   // Archivo CSV para ROOT
   std::ofstream csvFile("results/attenuation_data.csv", std::ios::app);
-  csvFile << detector->GetMaterial() << ","
-          << detector->GetThickness() / CLHEP::cm << ","
+  csvFile << materialName << "," << detector->GetThickness() / CLHEP::cm << ","
           << totalEvents << ","
           << transmittedEvents << ","
           << transmissionRatio << ","

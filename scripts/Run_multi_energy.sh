@@ -52,11 +52,31 @@ fi
 RESULTS_DIR="results/${MATERIAL}/multi_energy"
 mkdir -p "$RESULTS_DIR"
 
+# Determinar el nombre del material en Geant4
+case "$MATERIAL" in
+  water)
+    G4_MATERIAL="G4_WATER"
+    ;;
+  bone)
+    G4_MATERIAL="G4_BONE_COMPACT_ICRU"
+    ;;
+  muscle)
+    G4_MATERIAL="G4_MUSCLE_SKELETAL_ICRP"
+    ;;
+  *)
+    echo "ERROR: Material '$MATERIAL' no reconocido para la configuración de Geant4."
+    echo "Materiales válidos: water, bone, muscle."
+    exit 1
+    ;;
+esac
+
 echo "Paso 1: Generando datos de simulación GEANT4..."
 echo "----------------------------------------------"
 
 # Energías a simular (en keV)
-ENERGIES=(1 5 10 20 30 50 80 100 150 200 300 400 500 600 662 800 1000 1250 1500 2000 3000 4000 5000 6000 8000 10000 15000 20000)
+# NOTA: Las energías muy bajas (1-10 keV) tienen atenuación casi total en 5cm de agua.
+# Empezamos en 10 keV para obtener resultados medibles.
+ENERGIES=(10 20 30 50 80 100 150 200 300 400 500 600 662 800 1000 1250 1500 2000 3000 4000 5000 6000 8000 10000 15000 20000)
 
 echo "Ejecutando simulaciones para ${#ENERGIES[@]} energías en el material '$MATERIAL'..."
 
@@ -92,7 +112,7 @@ for energy in "${ENERGIES[@]}"; do
 /tracking/verbose 0
 
 # Configurar detector
-/detector/setMaterial ${MATERIAL}
+/detector/setMaterial ${G4_MATERIAL}
 /detector/setThickness 5.0 cm
 
 # Configurar energía del fotón
@@ -107,11 +127,11 @@ EOF
     
     # Ejecutar la simulación
     echo "  Simulando ${energy} keV..."
-    ./build/gammaAtt "$MAC_FILE" > /dev/null # Redirigir salida para no saturar la terminal
+    ./build/gammaAtt "$MAC_FILE" # Mostramos la salida para depurar
     
     # Renombrar el archivo de salida de Geant4
-    # Asumimos que Geant4 crea 'results/data_run_<material>.root'
-    TEMP_FILE="results/data_run_${MATERIAL}.root"
+    # El nombre del archivo temporal depende del nombre del material en Geant4
+    TEMP_FILE="results/data_run_${G4_MATERIAL}.root"
     if [ -f "$TEMP_FILE" ]; then
         mv "$TEMP_FILE" "$DATA_FILE"
     else

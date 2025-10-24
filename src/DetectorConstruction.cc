@@ -9,6 +9,7 @@ Fecha: Octubre 2025
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4NistManager.hh"
+#include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -18,7 +19,7 @@ Fecha: Octubre 2025
 
 /* Defino los valores por defecto que tenrá mi detector cuando arranque la simualción*/
 DetectorConstruction::DetectorConstruction()
-    : materialType("water"), thickness(5.0 * cm)
+    : materialType("water"), thickness(5.0 * cm), currentMaterial(nullptr), logicDet(nullptr)
 {
     messenger = new DetectorMessenger(this);
 } // Material inicial es agua, con espesor de 5cm.
@@ -122,6 +123,9 @@ G4Material *DetectorConstruction::DefineMaterials()
         G4cout << "Material cargado: " << material->GetName() << " (para request: " << m << ")" << G4endl;
     }
 
+    // Guardar el material actual para que otras clases puedan acceder a él
+    currentMaterial = material;
+
     return material;
 }
 
@@ -174,21 +178,30 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     // --- 3. Detector ---
     G4Material *detector_mat = nist->FindOrBuildMaterial("G4_AIR"); // Material del detector
     auto solidDet = new G4Box("Detector", 15 * cm, 15 * cm, 2 * mm);
-    auto logicDet = new G4LogicalVolume(solidDet, detector_mat, "Detector");
+    logicDet = new G4LogicalVolume(solidDet, detector_mat, "Detector"); // Asignar al miembro de la clase
     new G4PVPlacement(0, G4ThreeVector(0, 0, absorber_thickness / 2.0 + 5 * cm),
                       logicDet, "Detector", logicWorld, false, 0);
     auto visDet = new G4VisAttributes(G4Colour(1, 0, 0, 0.6)); // Rojo
     logicDet->SetVisAttributes(visDet);
 
-    // --- 4. Detector lógico: sensitivedetector. ---
+    return physWorld;
+}
+
+void DetectorConstruction::ConstructSDandField()
+{
+    // --- Asignación del Detector Sensible ---
+    // Esto se llama después de Construct() y cada vez que la geometría se reinicializa.
+    G4String sdName = "MyDetectorSD";
     auto sdManager = G4SDManager::GetSDMpointer();
-    auto sd = sdManager->FindSensitiveDetector("MyDetectorSD", false);
+    auto sd = sdManager->FindSensitiveDetector(sdName, false);
     if (!sd)
     {
-        sd = new MiSensitiveDetector("MyDetectorSD");
+        sd = new MiSensitiveDetector(sdName);
         sdManager->AddNewDetector(sd);
     }
-    logicDet->SetSensitiveDetector(sd);
 
-    return physWorld;
+    // Asignar el SD directamente al puntero del volumen lógico para evitar ambigüedad
+    if (logicDet) {
+        logicDet->SetSensitiveDetector(sd);
+    }
 }

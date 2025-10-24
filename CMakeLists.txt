@@ -8,18 +8,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/results)
 
 # Encontrar Geant4
-find_package(Geant4 REQUIRED ui_all vis_all)
+find_package(Geant4 REQUIRED ui_all vis_all multithreaded)
 
-# Encontrar ROOT (opcional)
-find_package(ROOT QUIET)
-if(ROOT_FOUND)
-    message(STATUS "ROOT encontrado en: ${ROOT_DIR}")
-    message(STATUS "ROOT version: ${ROOT_VERSION}")
-    include_directories(${ROOT_INCLUDE_DIRS})
-    add_definitions(-DUSE_ROOT)
-else()
-    message(STATUS "ROOT no encontrado - compilando sin análisis ROOT")
-endif()
+# Encontrar ROOT (obligatorio)
+find_package(ROOT REQUIRED)
+include_directories(${ROOT_INCLUDE_DIRS})
+add_definitions(-DUSE_ROOT)
+message(STATUS "ROOT encontrado (versión ${ROOT_VERSION}) - compilando con soporte ROOT.")
 
 include(${Geant4_USE_FILE})
 
@@ -43,9 +38,5 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 add_executable(gammaAtt ${sources})
 
 # Enlazar librerías
-target_link_libraries(gammaAtt ${Geant4_LIBRARIES})
-
-# Si ROOT está disponible, enlazarlo también
-if(ROOT_FOUND)
-    target_link_libraries(gammaAtt ${ROOT_LIBRARIES})
-endif()
+# El orden es importante: enlaza ROOT, luego Geant4 y sus dependencias como TBB.
+target_link_libraries(gammaAtt ${ROOT_LIBRARIES} ${Geant4_LIBRARIES} ${Geant4_TBB_LIBRARIES})

@@ -43,8 +43,10 @@ int main(int argc,char** argv) {
   EventAction* eventAction = new EventAction(runAction);
   runManager->SetUserAction(eventAction);
 
-  // Inicialización del núcleo de Geant4
-  runManager->Initialize();
+  // NO inicializar aquí. La inicialización se debe hacer en el macro
+  // con /run/initialize, justo antes del /run/beamOn.
+  // Esto asegura que la geometría se construya con los parámetros
+  // correctos definidos en el macro.
 
   // Inicialización de la visualización
   G4VisManager* visManager = new G4VisExecutive();
